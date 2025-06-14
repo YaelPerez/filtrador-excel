@@ -1,36 +1,44 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const { procesarExcel } = require('./filtroExcel');
+const { autoUpdater } = require("electron-updater");
 
 function createWindow() {
-  const win = new BrowserWindow({
-    width: 800,
-    height: 600,
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-    },
-  });
+    const win = new BrowserWindow({
+        width: 800,
+        height: 600,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+        },
+    });
 
-  win.loadFile('index.html');
+    win.loadFile('index.html');
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+    createWindow();
+    try {
+        autoUpdater.checkForUpdatesAndNotify();
+    } catch (error) {
+        console.error("Error al buscar actualizaciones:", error);
+    }
+});
 
 ipcMain.handle('abrir-archivo', async () => {
-  const { canceled, filePaths } = await dialog.showOpenDialog({
-    filters: [{ name: 'Excel', extensions: ['xlsx'] }],
-    properties: ['openFile'],
-  });
+    const { canceled, filePaths } = await dialog.showOpenDialog({
+        filters: [{ name: 'Excel', extensions: ['xlsx'] }],
+        properties: ['openFile'],
+    });
 
-  if (canceled) return null;
-  return filePaths[0];
+    if (canceled) return null;
+    return filePaths[0];
 });
 
 ipcMain.handle('procesar-archivo', async (event, ruta) => {
-  try {
-    const salida = await procesarExcel(ruta);
-    return { ok: true, ruta: salida };
-  } catch (error) {
-    return { ok: false, error: error.message };
-  }
+    try {
+        const salida = await procesarExcel(ruta);
+        return { ok: true, ruta: salida };
+    } catch (error) {
+        return { ok: false, error: error.message };
+    }
 });
