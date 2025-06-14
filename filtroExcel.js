@@ -29,10 +29,11 @@ async function procesarExcel(rutaEntrada) {
     hoja.addRow({ articulo, cantidad });
   }
 
-  const salidaPath = path.join(__dirname, 'output');
-  if (!fs.existsSync(salidaPath)) fs.mkdirSync(salidaPath);
+  // 🔧 Ajuste: crear ruta de salida en la misma carpeta que el archivo original
+  const infoOriginal = path.parse(rutaEntrada);
+  const nombreResultado = `${infoOriginal.name}_resultado.xlsx`;
+  const rutaFinal = path.join(infoOriginal.dir, nombreResultado);
 
-  const rutaFinal = path.join(salidaPath, 'resultado.xlsx');
   await libroSalida.xlsx.writeFile(rutaFinal);
   return rutaFinal;
 }
