@@ -1,6 +1,6 @@
 {
   "name": "filtrador-excel",
-  "version": "1.0.2",
+  "version": "1.0.1",
   "description": "Aplicación de escritorio para filtrar artículos duplicados en Excel",
   "main": "main.js",
   "author": "Yael Pérez",
@@ -37,7 +37,8 @@
     ],
     "directories": {
       "buildResources": "build"
-    }
+    },
+    "artifactName": "Filtrador-Excel-Setup-${version}.${ext}"
   },
   "dependencies": {
     "electron-log": "^5.4.1",
